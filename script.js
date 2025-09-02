@@ -117,7 +117,7 @@ saveBtn.addEventListener("click", () => {
     user.dob.date = new Date(modalDob.value).toISOString();
 
     displayUsers(currentUsers);
-    openUserModal(user, selectedUserIndex); // refresh modal with updated values
+    openUserModal(user, selectedUserIndex); 
   }
 });
 
