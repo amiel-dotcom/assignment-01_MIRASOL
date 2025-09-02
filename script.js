@@ -102,7 +102,7 @@ deleteBtn.addEventListener("click", () => {
 // enable edit mode
 editBtn.addEventListener("click", () => toggleEditMode(true));
 
-// save edits
+// pang save edits
 saveBtn.addEventListener("click", () => {
   if (selectedUserIndex !== null) {
     let user = currentUsers[selectedUserIndex];
@@ -121,7 +121,7 @@ saveBtn.addEventListener("click", () => {
   }
 });
 
-// validate input
+// check if validate input
 function validateInput(count) {
   if (isNaN(count) || count < 0 || count > 1000) {
     alert("Please enter a number between 0 and 1000.");
@@ -131,7 +131,7 @@ function validateInput(count) {
 }
 
 // handle generate
-function handleGenerateClick() {
+function GenerateClick() {
   const count = parseInt(userCountInput.value);
   if (!validateInput(count)) return;
 
@@ -144,9 +144,9 @@ function handleGenerateClick() {
 }
 
 // handle name type change
-function handleNameTypeChange() {
+function nameTypeChange() {
   if (currentUsers.length > 0) displayUsers(currentUsers);
 }
 
-generateBtn.addEventListener("click", handleGenerateClick);
-nameTypeSelect.addEventListener("change", handleNameTypeChange);
+generateBtn.addEventListener("click", GenerateClick);
+nameTypeSelect.addEventListener("change", nameTypeChange);
