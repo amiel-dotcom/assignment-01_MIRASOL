@@ -3,38 +3,32 @@ const userCountInput = document.getElementById("userCount");
 const userTable = document.getElementById("userTable");
 const nameTypeSelect = document.getElementById("nameType");
 
-// modal references
+// for modal references
 const modal = new bootstrap.Modal(document.getElementById("userModal"));
 const modalImg = document.getElementById("modalImg");
 const modalName = document.getElementById("modalName");
 const modalAddress = document.getElementById("modalAddress");
 const modalEmail = document.getElementById("modalEmail");
 const modalPhone = document.getElementById("modalPhone");
+const modalCell = document.getElementById("modalCell");
 const modalDob = document.getElementById("modalDob");
 const modalGender = document.getElementById("modalGender");
+
 const deleteBtn = document.getElementById("deleteBtn");
 const editBtn = document.getElementById("editBtn");
+const saveBtn = document.getElementById("saveBtn");
 
 let currentUsers = [];
 let selectedUserIndex = null;
 
 // fetch users
 function fetchUsers(count) {
-  return new Promise(function(resolve, reject) {
-    fetch("https://randomuser.me/api/?results=" + count)
-      .then(function(response) {
-        if (!response.ok) {
-          reject("API request failed with status " + response.status);
-        }
-        return response.json();
-      })
-      .then(function(data) {
-        resolve(data.results);
-      })
-      .catch(function(error) {
-        reject("Network error: " + error);
-      });
-  });
+  return fetch("https://randomuser.me/api/?results=" + count)
+    .then(response => {
+      if (!response.ok) throw new Error("API request failed with status " + response.status);
+      return response.json();
+    })
+    .then(data => data.results);
 }
 
 // display users
@@ -42,7 +36,7 @@ function displayUsers(users) {
   userTable.innerHTML = "";
   const nameType = nameTypeSelect.value;
 
-  users.forEach(function(user, index) {
+  users.forEach((user, index) => {
     const row = document.createElement("tr");
 
     const nameCell = document.createElement("td");
@@ -63,9 +57,7 @@ function displayUsers(users) {
     row.appendChild(countryCell);
 
     // double click to open modal
-    row.addEventListener("dblclick", function() {
-      openUserModal(user, index);
-    });
+    row.addEventListener("dblclick", () => openUserModal(user, index));
 
     userTable.appendChild(row);
   });
@@ -75,17 +67,31 @@ function displayUsers(users) {
 function openUserModal(user, index) {
   selectedUserIndex = index;
   modalImg.src = user.picture.large;
-  modalName.textContent = `${user.name.title} ${user.name.first} ${user.name.last}`;
-  modalAddress.textContent = `${user.location.street.number} ${user.location.street.name}, ${user.location.city}, ${user.location.state}, ${user.location.country}, ${user.location.postcode}`;
-  modalEmail.textContent = user.email;
-  modalPhone.textContent = user.phone;
-  modalDob.textContent = new Date(user.dob.date).toLocaleDateString();
-  modalGender.textContent = user.gender;
+  modalName.value = `${user.name.title} ${user.name.first} ${user.name.last}`;
+  modalAddress.value = `${user.location.street.number} ${user.location.street.name}, ${user.location.city}, ${user.location.state}, ${user.location.country}, ${user.location.postcode}`;
+  modalEmail.value = user.email;
+  modalPhone.value = user.phone;
+  modalCell.value = user.cell;
+  modalDob.value = new Date(user.dob.date).toLocaleDateString();
+  modalGender.value = user.gender;
+
+  // reset buttons
+  toggleEditMode(false);
   modal.show();
 }
 
+// toggle between view/edit mode
+function toggleEditMode(editMode) {
+  [modalName, modalAddress, modalEmail, modalPhone, modalCell, modalDob, modalGender].forEach(input => {
+    input.readOnly = !editMode;
+  });
+
+  editBtn.classList.toggle("d-none", editMode);
+  saveBtn.classList.toggle("d-none", !editMode);
+}
+
 // delete user
-deleteBtn.addEventListener("click", function() {
+deleteBtn.addEventListener("click", () => {
   if (selectedUserIndex !== null) {
     currentUsers.splice(selectedUserIndex, 1);
     displayUsers(currentUsers);
@@ -93,15 +99,25 @@ deleteBtn.addEventListener("click", function() {
   }
 });
 
-// edit user (example: change email)
-editBtn.addEventListener("click", function() {
+// enable edit mode
+editBtn.addEventListener("click", () => toggleEditMode(true));
+
+// save edits
+saveBtn.addEventListener("click", () => {
   if (selectedUserIndex !== null) {
-    const newEmail = prompt("Enter new email:", currentUsers[selectedUserIndex].email);
-    if (newEmail) {
-      currentUsers[selectedUserIndex].email = newEmail;
-      displayUsers(currentUsers);
-      openUserModal(currentUsers[selectedUserIndex], selectedUserIndex); // refresh modal
-    }
+    let user = currentUsers[selectedUserIndex];
+
+    // update user object
+    user.name.first = modalName.value.split(" ")[1] || user.name.first;
+    user.name.last = modalName.value.split(" ")[2] || user.name.last;
+    user.email = modalEmail.value;
+    user.phone = modalPhone.value;
+    user.cell = modalCell.value;
+    user.gender = modalGender.value;
+    user.dob.date = new Date(modalDob.value).toISOString();
+
+    displayUsers(currentUsers);
+    openUserModal(user, selectedUserIndex); // refresh modal with updated values
   }
 });
 
@@ -117,26 +133,19 @@ function validateInput(count) {
 // handle generate
 function handleGenerateClick() {
   const count = parseInt(userCountInput.value);
-
-  if (!validateInput(count)) {
-    return;
-  }
+  if (!validateInput(count)) return;
 
   fetchUsers(count)
-    .then(function(users) {
-      currentUsers = users; // store globally
+    .then(users => {
+      currentUsers = users;
       displayUsers(currentUsers);
     })
-    .catch(function(error) {
-      alert("Error: " + error);
-    });
+    .catch(error => alert("Error: " + error));
 }
 
 // handle name type change
 function handleNameTypeChange() {
-  if (currentUsers.length > 0) {
-    displayUsers(currentUsers);
-  }
+  if (currentUsers.length > 0) displayUsers(currentUsers);
 }
 
 generateBtn.addEventListener("click", handleGenerateClick);
