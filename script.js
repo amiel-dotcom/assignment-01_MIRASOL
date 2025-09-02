@@ -39,21 +39,21 @@ function displayUsers(users) {
   users.forEach((user, index) => {
     const row = document.createElement("tr");
 
-    const nameCell = document.createElement("td");
-    nameCell.textContent = nameType === "first" ? user.name.first : user.name.last;
+    const nameColumn = document.createElement("td");
+    nameColumn.textContent = nameType === "first" ? user.name.first : user.name.last;
 
-    const genderCell = document.createElement("td");
-    genderCell.textContent = user.gender;
+    const genderColumn = document.createElement("td");
+    genderColumn.textContent = user.gender;
 
-    const emailCell = document.createElement("td");
-    emailCell.textContent = user.email;
+    const emailcolumn = document.createElement("td");
+    emailcolumn.textContent = user.email;
 
     const countryCell = document.createElement("td");
     countryCell.textContent = user.location.country;
 
-    row.appendChild(nameCell);
-    row.appendChild(genderCell);
-    row.appendChild(emailCell);
+    row.appendChild(nameColumn);
+    row.appendChild(genderColumn);
+    row.appendChild(emailcolumn);
     row.appendChild(countryCell);
 
     // double click to open modal
