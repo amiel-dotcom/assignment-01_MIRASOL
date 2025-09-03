@@ -45,16 +45,16 @@ function displayUsers(users) {
     const genderColumn = document.createElement("td");
     genderColumn.textContent = user.gender;
 
-    const emailcolumn = document.createElement("td");
-    emailcolumn.textContent = user.email;
+    const emailColumn = document.createElement("td");
+    emailColumn.textContent = user.email;
 
-    const countryCell = document.createElement("td");
-    countryCell.textContent = user.location.country;
+    const countryCoulumn = document.createElement("td");
+    countryCoulumn.textContent = user.location.country;
 
     row.appendChild(nameColumn);
     row.appendChild(genderColumn);
-    row.appendChild(emailcolumn);
-    row.appendChild(countryCell);
+    row.appendChild(emailColumn);
+    row.appendChild(countryCoulumn);
 
     // double click to open modal
     row.addEventListener("dblclick", () => openUserModal(user, index));
