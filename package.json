@@ -1,0 +1,26 @@
+{
+  "name": "webdev_-assignment01",
+  "version": "1.0.0",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amiel-dotcom/assignment-01_MIRASOL.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amiel-dotcom/assignment-01_MIRASOL/issues"
+  },
+  "homepage": "https://github.com/amiel-dotcom/assignment-01_MIRASOL#readme",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2"
+  },
+  "type": "module"
+}

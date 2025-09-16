@@ -18,6 +18,13 @@ const deleteBtn = document.getElementById("deleteBtn");
 const editBtn = document.getElementById("editBtn");
 const saveBtn = document.getElementById("saveBtn");
 
+
+const nameViewMode = document.getElementById("nameViewMode");
+const nameEditMode = document.getElementById("nameEditMode");
+const modalTitle = document.getElementById("modalTitle");
+const modalFirstName = document.getElementById("modalFirstName");
+const modalLastName = document.getElementById("modalLastName");
+
 let currentUsers = [];
 let selectedUserIndex = null;
 
@@ -68,6 +75,12 @@ function openUserModal(user, index) {
   selectedUserIndex = index;
   modalImg.src = user.picture.large;
   modalName.value = `${user.name.title} ${user.name.first} ${user.name.last}`;
+
+  // fill edit mode fields too
+  modalTitle.value = user.name.title;
+  modalFirstName.value = user.name.first;
+  modalLastName.value = user.name.last;
+
   modalAddress.value = `${user.location.street.number} ${user.location.street.name}, ${user.location.city}, ${user.location.state}, ${user.location.country}, ${user.location.postcode}`;
   modalEmail.value = user.email;
   modalPhone.value = user.phone;
@@ -75,14 +88,24 @@ function openUserModal(user, index) {
   modalDob.value = new Date(user.dob.date).toLocaleDateString();
   modalGender.value = user.gender;
 
-  // reset buttons
+  // reset buttons and ensure we start in view mode
   toggleEditMode(false);
   modal.show();
 }
 
 // toggle between view/edit mode
 function toggleEditMode(editMode) {
-  [modalName, modalAddress, modalEmail, modalPhone, modalCell, modalDob, modalGender].forEach(input => {
+  if (editMode) {
+    // show separate first/last name inputs
+    nameViewMode.classList.add("d-none");
+    nameEditMode.classList.remove("d-none");
+  } else {
+    // show single full name input
+    nameViewMode.classList.remove("d-none");
+    nameEditMode.classList.add("d-none");
+  }
+
+  [modalAddress, modalEmail, modalPhone, modalCell, modalDob, modalGender].forEach(input => {
     input.readOnly = !editMode;
   });
 
@@ -102,22 +125,27 @@ deleteBtn.addEventListener("click", () => {
 // enable edit mode
 editBtn.addEventListener("click", () => toggleEditMode(true));
 
-// pang save edits
+// save edits
 saveBtn.addEventListener("click", () => {
   if (selectedUserIndex !== null) {
     let user = currentUsers[selectedUserIndex];
 
     // update user object
-    user.name.first = modalName.value.split(" ")[1] || user.name.first;
-    user.name.last = modalName.value.split(" ")[2] || user.name.last;
+    user.name.first = modalFirstName.value || user.name.first;
+    user.name.last = modalLastName.value || user.name.last;
+    modalName.value = `${user.name.title} ${user.name.first} ${user.name.last}`;
+
     user.email = modalEmail.value;
     user.phone = modalPhone.value;
     user.cell = modalCell.value;
     user.gender = modalGender.value;
     user.dob.date = new Date(modalDob.value).toISOString();
 
+    // refresh table immediately with updated data
     displayUsers(currentUsers);
-    openUserModal(user, selectedUserIndex); 
+
+    // return to view mode
+    toggleEditMode(false);
   }
 });
 
